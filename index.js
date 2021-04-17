@@ -46,6 +46,15 @@ client.connect(err => {
     })
   })
 
+  // Delete a Service API
+  app.delete('/serviceDelete/:id', (req, res) => {
+    const id = ObjectID(req.params.id);
+    servicesCollection.deleteOne({_id: id})
+    .then(result => {
+      console.log(result);
+    })
+  })
+
   // app.get('/product/:id', (req, res) => {
   //   const id = ObjectID(req.params.id);
   //   servicesCollection.find({_id: id})
@@ -54,14 +63,6 @@ client.connect(err => {
   //   })
   // })
 
-
-  // app.delete('/delete/:id', (req, res) => {
-  //   const id = ObjectID(req.params.id);
-  //   servicesCollection.deleteOne({_id: id})
-  //   .then(result => {
-  //     console.log(result);
-  //   })
-  // })
 
   // app.patch('/update/:id', (req, res) => {
   //   const id = ObjectID(req.params.id);
@@ -77,12 +78,12 @@ client.connect(err => {
   // })
 
 
-  // Order Collections
+  // Review Collections
   const reviewsCollection = client.db(dbName).collection(reCollection);
-  // console.log(ordersCollection);
+  // console.log(reviewsCollection);
 
 
-  // Order Collections Setup
+  // Review Collections Setup
   app.post('/addReviews', (req, res) => {
     const newReview = req.body;
     console.log(newReview);
