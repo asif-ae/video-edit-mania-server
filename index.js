@@ -14,6 +14,7 @@ const pass = process.env.DB_PASS;
 const dbName = process.env.DB_MAIN;
 const mcCollection = process.env.DB_MACO;
 const reCollection = process.env.DB_RECO;
+const odCollection = process.env.DB_ODCO;
 const uri = `mongodb+srv://${name}:${pass}@cluster0.lq9rh.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 app.use(cors())
@@ -84,7 +85,7 @@ client.connect(err => {
 
 
   // Review Collections Setup
-  app.post('/addReviews', (req, res) => {
+  app.post('/addReview', (req, res) => {
     const newReview = req.body;
     console.log(newReview);
     reviewsCollection.insertOne(newReview)
@@ -97,6 +98,31 @@ client.connect(err => {
   app.get('/reviews', (req, res) => {
     // console.log(req.query.email);
     reviewsCollection.find()
+    .toArray((err, documents) => {
+      res.send(documents);
+    })
+  })
+
+
+  // Orders Collections
+  const ordersCollection = client.db(dbName).collection(odCollection);
+  // console.log(ordersCollection);
+
+
+  // Orders Collections Setup
+  app.post('/addOrders', (req, res) => {
+    const newOrders = req.body;
+    console.log(newOrders);
+    ordersCollection.insertOne(newOrders)
+    .then(result => {
+      console.log('inserted count:', result.insertedCount);
+      res.send(result.insertedCount > 0)
+    })
+  })
+
+  app.get('/orders', (req, res) => {
+    // console.log(req.query.email);
+    ordersCollection.find({email: req.query.email})
     .toArray((err, documents) => {
       res.send(documents);
     })
