@@ -15,6 +15,7 @@ const dbName = process.env.DB_MAIN;
 const mcCollection = process.env.DB_MACO;
 const reCollection = process.env.DB_RECO;
 const odCollection = process.env.DB_ODCO;
+const adCollection = process.env.DB_ADCO;
 const uri = `mongodb+srv://${name}:${pass}@cluster0.lq9rh.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 app.use(cors())
@@ -55,29 +56,6 @@ client.connect(err => {
       console.log(result);
     })
   })
-
-  // app.get('/product/:id', (req, res) => {
-  //   const id = ObjectID(req.params.id);
-  //   servicesCollection.find({_id: id})
-  //   .toArray((err, documents) => {
-  //     res.send(documents);
-  //   })
-  // })
-
-
-  // app.patch('/update/:id', (req, res) => {
-  //   const id = ObjectID(req.params.id);
-  //   servicesCollection.updateOne(
-  //     {_id: id},
-  //     {
-  //       $set: {name: req.body.productName, weight: req.body.weight, price: req.body.addPrice}
-  //     }
-  //   )
-  //   .then(result => {
-  //     console.log('updated');
-  //   })
-  // })
-
 
   // Review Collections
   const reviewsCollection = client.db(dbName).collection(reCollection);
@@ -120,17 +98,20 @@ client.connect(err => {
     })
   })
 
+  
+
   // Orders by email
   app.get('/orders', (req, res) => {
-    // console.log(req.query.email);
+    console.log(req.query.email);
     ordersCollection.find({email: req.query.email})
     .toArray((err, documents) => {
       res.send(documents);
     })
   })
 
-  // All Orders (Admin)
-  app.get('/orders', (req, res) => {
+  // Orders by no email
+  app.get('/orderByAdmin', (req, res) => {
+    // console.log(req.query.email);
     ordersCollection.find()
     .toArray((err, documents) => {
       res.send(documents);
@@ -159,6 +140,41 @@ client.connect(err => {
       console.log('updated');
     })
   })
+
+  // Admin Collections
+  const adminsCollection = client.db(dbName).collection(adCollection);
+  // console.log(adminsCollection);
+  // **********  Admin  ********** //  
+  
+  // Admin Collections Setup
+  app.post('/addAdmin', (req, res) => {
+    const newAdmin = req.body;
+    console.log(newAdmin);
+    adminsCollection.insertOne(newAdmin)
+    .then(result => {
+      console.log('inserted count:', result.insertedCount);
+      res.send(result.insertedCount > 0)
+    })
+  })
+
+  app.get('/admins', (req, res) => {
+    // console.log(req.query.email);
+    adminsCollection.find()
+    .toArray((err, documents) => {
+      res.send(documents);
+    })
+  })
+
+  // Orders by email
+  app.get('/isAdmin', (req, res) => {
+    console.log(req.query.email);
+    adminsCollection.find({adminEmail: req.query.email})
+    .toArray((err, documents) => {
+      res.send(documents[0]);
+    })
+  })
+  // **********  Admin  ********** //
+  
 
   // Root Path
   app.get('/', (req, res) => {
