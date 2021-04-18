@@ -178,7 +178,7 @@ client.connect(err => {
 
   // Root Path
   app.get('/', (req, res) => {
-    res.send("Hello, Viewers! This URL from localhost is available now!")
+    res.send("Hello, Viewers! This URL from Heroku is available now!")
   })
 
   // client.close();
